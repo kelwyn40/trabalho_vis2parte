@@ -1,0 +1,31 @@
+{
+    "name": "d3js-vis",
+    "private": true,
+    "version": "1.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "d3": "^7.9.0",
+        "@duckdb/duckdb-wasm": "^1.29.0"
+    },
+    "devDependencies": {
+        "vite": "^6.3.5"
+    },
+    "main": "vite.config.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/lucasbogado10/trabalho_vis2.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/lucasbogado10/trabalho_vis2/issues"
+    },
+    "homepage": "https://github.com/lucasbogado10/trabalho_vis2#readme",
+    "description": ""
+}
