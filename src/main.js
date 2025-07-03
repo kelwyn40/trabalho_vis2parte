@@ -1,3 +1,4 @@
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm"; // <-- Esta é a linha adicionada
 import { Taxi } from "./taxi.js";
 import { loadDailyRideCountChart, loadTipAmountByTimeChart, clearAllCharts, loadWeekdayWeekendChart } from "./plot.js";
 
