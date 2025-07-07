@@ -1,78 +1,75 @@
-import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm"; // <-- Esta é a linha adicionada
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 import { Taxi } from "./taxi.js";
-import { loadDailyRideCountChart, loadTipAmountByTimeChart, clearAllCharts, loadWeekdayWeekendChart } from "./plot.js";
+import { plotCharts, clearAllCharts } from "./plot.js";
 
-let allTaxiData = null; // Variável para armazenar todos os dados originais
-
-function callbacks(data) {
+async function main() {
+    const taxi = new Taxi();
+    const loadingIndicator = document.querySelector("#loadingIndicator");
     const loadBtn = document.querySelector("#loadBtn");
     const clearBtn = document.querySelector("#clearBtn");
-    const loadingIndicator = document.querySelector("#loadingIndicator"); // Seleciona o indicador
 
-    if (!loadBtn || !clearBtn || !loadingIndicator) { // Inclui o indicador na verificação
-        console.error("Botões ou indicador de carregamento não encontrados.");
-        return;
-    }
+    let taxiData = null;
+    let geoData = null;
 
-    // Armazena os dados originais ao iniciar o callback
-    allTaxiData = data;
-
-    loadBtn.addEventListener("click", async () => {
-        clearAllCharts(); // Limpa todos os gráficos e o filtro atual
-        // Remove a seleção de todos os círculos ao recarregar, garantindo um estado limpo
-        d3.select("#dailyRideCountChart").selectAll("circle").classed("selected", false);
-
-        loadingIndicator.style.display = 'block'; // Mostra o indicador
-        try {
-            // Passe os dados originais para a função de plotagem inicial
-            await loadDailyRideCountChart(allTaxiData);
-            await loadTipAmountByTimeChart(allTaxiData);
-            await loadWeekdayWeekendChart(allTaxiData);
-        } catch (error) {
-            console.error("Erro ao carregar gráficos:", error);
-            // Você pode adicionar um elemento na UI para mostrar mensagens de erro ao usuário
-        } finally {
-            loadingIndicator.style.display = 'none'; // Esconde o indicador ao finalizar (sucesso ou erro)
+    loadBtn.addEventListener("click", () => {
+        if (taxiData && geoData) {
+            plotCharts(taxiData, geoData);
+        } else {
+            console.error("Dados ainda não foram carregados.");
         }
     });
 
-    clearBtn.addEventListener("click", async () => {
-        clearAllCharts(); // Limpa todos os gráficos e o filtro atual
-        // Remove a seleção de todos os círculos ao limpar
-        d3.select("#dailyRideCountChart").selectAll("circle").classed("selected", false);
-    });
-}
-
-window.onload = async () => {
-    const taxi = new Taxi();
+    clearBtn.addEventListener("click", clearAllCharts);
 
     try {
-        await taxi.init();
-        await taxi.loadTaxi();
+        loadingIndicator.style.display = "block";
 
-        const sql = `
+        // Iniciar o carregamento de ambos os dados em paralelo
+        await taxi.init();
+        await taxi.loadTaxi(3); // Carregar 3 meses para um bom volume de dados
+
+        const taxiDataPromise = taxi.query(`
             SELECT
-                lpep_pickup_datetime,
+                CAST(strftime(lpep_pickup_datetime, '%w') AS INTEGER) AS pickup_day_of_week,
+                CAST(strftime(lpep_pickup_datetime, '%H') AS INTEGER) AS pickup_hour,
                 trip_distance,
                 tip_amount,
-                -- Extrair dia da semana (0=Domingo, 1=Segunda, ..., 6=Sábado)
-                CAST(strftime(lpep_pickup_datetime, '%w') AS INTEGER) AS pickup_day_of_week,
-                -- Extrair hora (00-23)
-                CAST(strftime(lpep_pickup_datetime, '%H') AS INTEGER) AS pickup_hour
-            FROM
-                taxi_2023
-            `;
+                passenger_count,
+                CAST(PULocationID AS INTEGER) AS PULocationID,
+                payment_type
+            FROM taxi_2023
+            WHERE trip_distance > 0 AND trip_distance < 50
+              AND tip_amount >= 0 AND tip_amount < 100
+              AND passenger_count > 0
+              AND PULocationID IS NOT NULL
+              AND payment_type IS NOT NULL;
+        `);
 
-        const data = await taxi.query(sql);
-        callbacks(data); // Passa os dados para a função de callbacks para serem armazenados
+        const geoDataPromise = d3.json("data/nyc_taxi_zones.geojson");
+
+        // Aguardar a conclusão de ambos
+        [taxiData, geoData] = await Promise.all([taxiDataPromise, geoDataPromise]);
+
+        // ===================================================================
+        // ETAPA DE NORMALIZAÇÃO DE DADOS (CORREÇÃO CRÍTICA)
+        // Garante que o ID do táxi seja sempre um número padrão, não um 'bigint'.
+        // ===================================================================
+        taxiData.forEach((d) => {
+            d.PULocationID = Number(d.PULocationID);
+        });
+
+        console.log("Dados carregados e normalizados com sucesso.");
+
+        loadBtn.disabled = false;
+        loadBtn.textContent = "Carregar Gráficos";
+        loadingIndicator.style.display = "none";
+
+        plotCharts(taxiData, geoData);
     } catch (error) {
-        console.error("Erro na inicialização ou carregamento dos dados do táxi:", error);
-        // Exiba uma mensagem de erro na UI se a carga inicial falhar
-        const loadingIndicator = document.querySelector("#loadingIndicator");
-        if (loadingIndicator) {
-            loadingIndicator.style.display = 'block';
-            loadingIndicator.textContent = 'Erro ao carregar dados. Verifique o console para mais detalhes.';
-            loadingIndicator.style.color = 'red';
-        }
+        console.error("Erro na inicialização ou carregamento dos dados:", error);
+        loadingIndicator.textContent = "Erro ao carregar dados. Verifique o console.";
+        loadingIndicator.style.color = "red";
     }
-};
+}
+
+window.onload = main;

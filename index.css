@@ -2,14 +2,14 @@
     --dark-background: #1c2b3a;
     --card-background: #2a3c4d;
     --vibrant-purple: #00bf63; /* Verde vibrante para tema */
-    --light-purple: #33ddaa;   /* Verde mais claro para hover */
+    --light-purple: #33ddaa; /* Verde mais claro para hover */
     --text-light: #e0e6eb;
     --text-dark: #aab7c4;
     --border-dark: #3f5c7a;
-    --shadow-dark: black;
+    --shadow-dark: rgba(0, 0, 0, 0.4);
 
     --border-radius: 10px;
-    --padding-base: 1.8rem;
+    --padding-base: 1.5rem;
     --gap-base: 1.5rem;
 }
 
@@ -30,12 +30,13 @@ h2,
 h3 {
     font-family: "Open Sans", sans-serif;
     color: var(--vibrant-purple);
+    margin-top: 0;
 }
 
-ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+h2 {
+    font-size: 1.4rem;
+    text-align: center;
+    margin-bottom: 1rem;
 }
 
 .header {
@@ -47,6 +48,7 @@ ul {
 .header-content {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 .header-left {
@@ -56,9 +58,8 @@ ul {
 }
 
 .header h1 {
-    font-size: 2.2rem;
+    font-size: 2rem;
     margin: 0;
-    color: var(--vibrant-purple);
 }
 
 .group-info {
@@ -66,17 +67,17 @@ ul {
     align-items: center;
     gap: 10px;
 }
-
 .group-info h3 {
     margin: 0;
     color: var(--text-dark);
 }
-
 .group-info ul {
     display: flex;
     gap: 10px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
-
 .group-info ul li {
     color: var(--text-light);
     font-size: 1.1rem;
@@ -96,78 +97,81 @@ ul {
 .main-content {
     flex-grow: 1;
     padding: var(--padding-base);
-    background-color: var(--dark-background);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     overflow-y: auto;
 }
 
-.chart-container {
-    width: 100%;
-    margin-bottom: var(--padding-base);
+.chart-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, auto);
     gap: var(--gap-base);
-}
-
-.chart-group {
-    display: flex;
-    justify-content: space-between;
     width: 100%;
-    max-width: 100%;
-    margin-bottom: 30px;
+    max-width: 1600px;
+    margin: 0 auto;
 }
 
 .chart-box {
-    min-width: 700px;
     padding: var(--padding-base);
     background-color: var(--card-background);
     border-radius: var(--border-radius);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
     border: 1px solid var(--border-dark);
     box-shadow: 0 4px 8px var(--shadow-dark);
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-box.large {
+    grid-row: span 2; /* O mapa ocupa duas linhas de altura */
 }
 
 svg {
     width: 100%;
-    height: 450px;
+    height: 100%;
+    min-height: 350px;
     background-color: var(--dark-background);
     border-radius: var(--border-radius);
-    border: 1px solid var(--border-dark);
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-circle {
+/* Estilos para o Mapa */
+.zone {
+    stroke: #ccc;
+    stroke-width: 0.5px;
+    transition: fill 0.3s ease;
+}
+.zone:hover {
+    stroke: white;
+    stroke-width: 1.5px;
+}
+.zone.selected {
+    stroke: var(--vibrant-purple);
+    stroke-width: 2px;
+}
+
+/* Estilos para o Heatmap */
+.heatmap-cell {
+    stroke: var(--dark-background);
+    stroke-width: 1px;
+}
+
+/* Estilos para o Scatter Plot */
+.dot {
+    opacity: 0.7;
+    stroke: white;
+    stroke-width: 0.5px;
+    transition: opacity 0.3s ease;
+}
+
+/* Estilos para D3 Brushes (seleção) */
+.brush .selection {
+    fill: var(--vibrant-purple);
+    fill-opacity: 0.3;
     stroke: var(--light-purple);
-    stroke-width: 2;
-    fill: var(--vibrant-purple);
-    transition: fill 0.2s ease, stroke 0.2s ease, stroke-width 0.2s ease; /* Transição suave para estados */
-}
-
-/* Estilo para círculos selecionados no gráfico de linhas do dia da semana */
-circle.selected {
-    fill: #ffc107; /* Cor de destaque para o círculo selecionado */
-    stroke: #ff9800; /* Borda de destaque */
-    stroke-width: 2.5px; /* Aumenta um pouco a borda para destacar */
-}
-
-rect.bar {
-    fill: var(--vibrant-purple);
-}
-
-text.axis-label {
-    font-size: 1em;
-    fill: var(--text-dark);
 }
 
 .axis path,
 .axis line {
     stroke: var(--border-dark);
-    shape-rendering: crispEdges;
 }
-
 .axis text {
     fill: var(--text-dark);
     font-size: 0.9em;
@@ -180,8 +184,8 @@ button {
     border-radius: var(--border-radius);
     border: 1px solid var(--vibrant-purple);
     background-color: var(--vibrant-purple);
-    color: var(--text-light);
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    color: #fff;
+    transition: all 0.3s ease;
     text-transform: uppercase;
 }
 
@@ -194,5 +198,4 @@ button:hover {
 
 button:active {
     transform: translateY(0);
-    background-color: var(--vibrant-purple);
 }

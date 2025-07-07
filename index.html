@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
     <head>
         <meta charset="UTF-8" />
-        <title>Visualização de Dados</title>
+        <title>Análise Visual de Táxis - NYC</title>
         <link rel="stylesheet" href="index.css" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     </head>
@@ -11,7 +11,7 @@
         <header class="header">
             <div class="header-content">
                 <div class="header-left">
-                    <h1>Visualização de Dados</h1>
+                    <h1>Análise Visual de Táxis - NYC</h1>
                     <div class="group-info">
                         <h3>Grupo:</h3>
                         <ul>
@@ -32,24 +32,35 @@
 
         <div class="base-layout">
             <main class="main-content">
-                <div id="loadingIndicator" style="display: none; text-align: center; margin-top: 20px; font-size: 1.2em; color: var(--text-dark);">
+                <div
+                    id="loadingIndicator"
+                    style="
+                        display: none;
+                        text-align: center;
+                        margin-top: 20px;
+                        font-size: 1.2em;
+                        color: var(--text-dark);
+                    "
+                >
                     Carregando dados e gráficos...
                 </div>
 
-                <div class="chart-container">
-                    <div class="chart-group">
-                        <div class="chart-box">
-                            <h2>Número de Corridas por Dia da Semana</h2>
-                            <svg id="dailyRideCountChart"></svg>
-                        </div>
-                        <div class="chart-box">
-                            <h2>Dias de Semana vs. Fim de Semana</h2>
-                            <svg id="weekdayWeekendChart"></svg>
-                        </div>
+                <div class="chart-grid">
+                    <div class="chart-box large">
+                        <h2>Mapa de Embarques por Zona</h2>
+                        <svg id="mapChart"></svg>
                     </div>
                     <div class="chart-box">
-                        <h2>Relação entre Gorjeta e Horário das Corridas</h2>
-                        <svg id="tipTimeChart"></svg>
+                        <h2>Corridas por Hora e Dia da Semana</h2>
+                        <svg id="heatmapChart"></svg>
+                    </div>
+                    <div class="chart-box">
+                        <h2>Distância vs. Gorjeta</h2>
+                        <svg id="scatterPlot"></svg>
+                    </div>
+                    <div class="chart-box">
+                        <h2>Formas de Pagamento</h2>
+                        <svg id="barChart"></svg>
                     </div>
                 </div>
             </main>
