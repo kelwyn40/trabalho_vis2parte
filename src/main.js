@@ -1,5 +1,5 @@
 import { Taxi } from "./taxi.js";
-import { plotCharts, clearAllCharts } from "./plot.js";
+import { plotCharts } from "./plot.js";
 
 async function main() {
     const taxi = new Taxi();
@@ -18,8 +18,6 @@ async function main() {
             console.error("Dados ainda não foram carregados.");
         }
     });
-
-    clearBtn.addEventListener("click", clearAllCharts);
 
     try {
         loadingIndicator.style.display = "block";

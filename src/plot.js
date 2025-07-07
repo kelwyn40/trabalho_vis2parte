@@ -168,7 +168,7 @@ function drawScatterPlot(data) {
         .attr("class", "dot")
         .attr("cx", (d) => xScale(d.trip_distance))
         .attr("cy", (d) => yScale(d.tip_amount))
-        .attr("r", 2)
+        .attr("r", (d) => (d.passenger_count || 1) * 1.5)
         .style("fill", "var(--vibrant-purple)")
         .style("opacity", 0.5);
 
@@ -240,13 +240,4 @@ function drawBarChart(data) {
     g.append("g")
         .attr("transform", `translate(0, ${height - margin.top - margin.bottom})`)
         .call(d3.axisBottom(xScale).ticks(5, "s"));
-}
-
-export function clearAllCharts() {
-    activeFilters = {};
-    if (allData.length > 0) {
-        draw();
-    } else {
-        d3.selectAll("svg").selectAll("*").remove();
-    }
 }
