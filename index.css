@@ -1,8 +1,8 @@
 :root {
     --dark-background: #1c2b3a;
     --card-background: #2a3c4d;
-    --vibrant-purple: #00bf63; /* Verde vibrante para tema */
-    --light-purple: #33ddaa; /* Verde mais claro para hover */
+    --vibrant-purple: #00bf63;
+    --light-purple: #33ddaa;
     --text-light: #e0e6eb;
     --text-dark: #aab7c4;
     --border-dark: #3f5c7a;
@@ -120,40 +120,18 @@ h2 {
     flex-direction: column;
 }
 
-.chart-box.large {
-    grid-row: span 2; /* O mapa ocupa duas linhas de altura */
-}
-
 svg {
     width: 100%;
-    height: 100%;
     min-height: 350px;
     background-color: var(--dark-background);
     border-radius: var(--border-radius);
 }
 
-/* Estilos para o Mapa */
-.zone {
-    stroke: #ccc;
-    stroke-width: 0.5px;
-    transition: fill 0.3s ease;
-}
-.zone:hover {
-    stroke: white;
-    stroke-width: 1.5px;
-}
-.zone.selected {
-    stroke: var(--vibrant-purple);
-    stroke-width: 2px;
-}
-
-/* Estilos para o Heatmap */
 .heatmap-cell {
     stroke: var(--dark-background);
     stroke-width: 1px;
 }
 
-/* Estilos para o Scatter Plot */
 .dot {
     opacity: 0.7;
     stroke: white;
@@ -161,7 +139,6 @@ svg {
     transition: opacity 0.3s ease;
 }
 
-/* Estilos para D3 Brushes (seleção) */
 .brush .selection {
     fill: var(--vibrant-purple);
     fill-opacity: 0.3;
@@ -198,4 +175,14 @@ button:hover {
 
 button:active {
     transform: translateY(0);
+}
+
+.day-bar:hover {
+    fill: var(--light-purple);
+}
+
+.day-bar.selected {
+    fill: var(--light-purple);
+    stroke: #fff;
+    stroke-width: 1.5px;
 }
